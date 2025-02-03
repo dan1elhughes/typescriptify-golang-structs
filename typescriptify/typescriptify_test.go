@@ -1076,3 +1076,26 @@ func TestTypescriptifyCustomJsonTag(t *testing.T) {
 }`
 	testConverter(t, converter, false, desiredResult, nil)
 }
+
+func TestTypescriptifyCustomTypeInMap(t *testing.T) {
+	converter := New().WithInterface(true)
+
+	type Foo uint
+	converter.ManageType(reflect.TypeOf(Foo(0)), TypeOptions{TSType: "number"})
+
+	type Bar struct {
+		Foo        Foo            `json:"foo"`
+		FooInKey   map[Foo]bool   `json:"fooInKey"`
+		FooInValue map[string]Foo `json:"fooInValue"`
+	}
+
+	converter.AddType(reflect.TypeOf(Bar{}))
+
+	desiredResult := `export interface Bar {
+		foo: number;
+		fooInKey: {[key: number]: boolean};
+		fooInValue: {[key: string]: number};
+	}`
+
+	testConverter(t, converter, true, desiredResult, nil)
+}
