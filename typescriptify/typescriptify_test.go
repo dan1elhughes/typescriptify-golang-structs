@@ -1098,5 +1098,5 @@ func TestTypescriptifyCustomTypeInMap(t *testing.T) {
 	fooInValue: {[key: string]: number};
 }`
 
-	testConverter(t, converter, true, desiredResult, nil)
+	testConverter(t, converter, false, desiredResult, nil)
 }
